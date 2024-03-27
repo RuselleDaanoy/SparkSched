@@ -62,25 +62,32 @@ public class TraverseActivities {
         }
     }
 
-    public void dfs(String start) {
-        Stack<String> stack = new Stack<>();
-        stack.push(start);
-        visitedNodes.add(start); 
+public void dfs(String start) {
+    Stack<String> stack = new Stack<>();
+    stack.push(start);
+    visitedNodes.add(start); 
     
-        while (!stack.isEmpty()) {
-            String currentTask = stack.pop();
-            System.out.println("Visited task: " + currentTask);
+    while (!stack.isEmpty()) {
+        String currentTask = stack.pop();
+        System.out.println("Visited task: " + currentTask);
     
-            List<Task> neighbors = graph.getOrDefault(currentTask, Collections.emptyList());
-            neighbors.sort(Comparator.comparing(Task::getDateTime).reversed()) ;
-            for (Task neighbor : neighbors) {
-                if (!visitedNodes.contains(neighbor.getName())) {
-                    stack.push(neighbor.getName());
-                    visitedNodes.add(neighbor.getName());
-                }
+        List<Task> neighbors = graph.getOrDefault(currentTask, Collections.emptyList());
+        neighbors.sort(Comparator.comparing(Task::getDateTime).reversed());
+        for (Task neighbor : neighbors) {
+            if (!visitedNodes.contains(neighbor.getName())) {
+                stack.push(neighbor.getName());
+                visitedNodes.add(neighbor.getName());
+            }
+        }
+
+        for (String task : graph.keySet()) {
+            if (!visitedNodes.contains(task)) {
+                stack.push(task);
+                visitedNodes.add(task);
             }
         }
     }
+}
 
     static class Task {
         private String name;
