@@ -32,7 +32,7 @@ public class QuickSelect{
 
         String suffix = getSuffix(k);
         int kthSmallest = quickSelect(array, 0, array.length - 1, k, steps);
-        System.out.println("\nThe " + k + suffix + " smallest element: " + kthSmallest);
+        System.out.println("\nThe " + k + suffix + " smallest element is " + kthSmallest);
 
         System.out.println("\nPARTITIONING PROCESS");
         for (String step : steps) {
