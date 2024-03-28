@@ -26,18 +26,19 @@ public class LaunchPad {
         gbc.gridy = 0;
         gbc.gridwidth = GridBagConstraints.REMAINDER; 
         gbc.fill = GridBagConstraints.HORIZONTAL; 
-        gbc.insets = new Insets(0, 50, 0, 0);
+        gbc.insets = new Insets(0, -80, 0, 0);
         mainPanel.add(label, gbc);
 
         JPanel underlinePanel = new JPanel();
         underlinePanel.setBackground(new Color(54, 54, 54)); 
-        int underlineWidth = 270; 
-        underlinePanel.setPreferredSize(new Dimension(underlineWidth, 7)); 
+        int underlineWidth = 280; 
+        underlinePanel.setPreferredSize(new Dimension(underlineWidth, 9)); 
 
         gbc.gridx = 0;
         gbc.gridy = 1;
         gbc.gridwidth = 1;
         gbc.anchor = GridBagConstraints.WEST;
+        gbc.insets = new Insets(0, 60, 0, 0);
         mainPanel.add(underlinePanel, gbc);
         
         JLabel textLabel = new JLabel("<html>Turning plans into the spark<br>of success.</html>");
