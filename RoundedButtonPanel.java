@@ -11,7 +11,7 @@ public class RoundedButtonPanel extends JPanel {
 
     public RoundedButtonPanel(String buttonText) {
         this.buttonText = buttonText;
-        setPreferredSize(new Dimension(290, 35));
+        setPreferredSize(new Dimension(20, 35)); 
         setOpaque(false);
         addMouseListener(new MouseAdapter() {
             @Override
@@ -46,7 +46,7 @@ public class RoundedButtonPanel extends JPanel {
         if (hovered) {
             g2d.setColor(new Color(255, 135, 0));
         } else {
-            g2d.setColor(new Color(50, 50, 50));
+            g2d.setColor(new Color(92, 82, 70));
         }
         g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
 
