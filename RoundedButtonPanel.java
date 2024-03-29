@@ -48,7 +48,7 @@ public class RoundedButtonPanel extends JPanel {
         } else {
             g2d.setColor(new Color(92, 82, 70));
         }
-        g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 20, 20);
+        g2d.fillRoundRect(0, 0, getWidth(), getHeight(), 35, 35);
 
         // Draw text
         g2d.setColor(Color.WHITE);
