@@ -23,8 +23,9 @@ public class HighlightPanel extends JPanel {
         graphics.setColor(fixedColor);
         graphics.fillRoundRect(0, 0, width - 1, height - 1, arcs.width, arcs.height);
 
-        graphics.setColor(getForeground());
-        graphics.drawRoundRect(0, 0, width - 1, height - 1, arcs.width, arcs.height);
+        //IF EVER PREFER NIYO YUNG MAY BORDER SIYA, KUNIN NIYO LANG TO
+        //graphics.setColor(getForeground());
+        //graphics.drawRoundRect(0, 0, width - 1, height - 1, arcs.width, arcs.height);
     }
 }
 
