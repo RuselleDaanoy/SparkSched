@@ -51,6 +51,9 @@ public class PrioPanel extends JFrame {
         columnTime.setPreferredWidth(50); 
         columnName.setPreferredWidth(150); 
 
+        dataTable.getTableHeader().setPreferredSize(new Dimension(dataTable.getTableHeader().getWidth(), 30));
+        dataTable.setRowHeight(25);
+
         JScrollPane scrollPane = new JScrollPane(dataTable);
         scrollPane.setBounds(30, 135, taskSummary.getWidth(), 400); 
 
