@@ -1,0 +1,144 @@
+package daa.project;
+
+import java.awt.*;
+import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
+
+public class PageOneGUI extends JFrame{
+    private JPanel leftPanel;
+    private JTable table;
+    private DefaultTableModel taskTable;
+
+    public PageOneGUI(){
+        setTitle("Spark Sched");
+        setSize(1280, 720);
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+
+        // main - for test only
+        JPanel mainPanel = new JPanel(new BorderLayout());
+
+        // left panel
+        leftPanel = new JPanel(new BorderLayout());
+        leftPanel.setPreferredSize(new Dimension(500, 720));
+        leftPanel.setBackground(Color.WHITE);
+
+        JPanel topPanel = new JPanel(new GridBagLayout());
+        topPanel.setBackground(Color.WHITE);
+        GridBagConstraints gbc = new GridBagConstraints();
+        gbc.gridx = 0;
+        gbc.gridy = 0;
+        gbc.insets = new Insets(0, 0, 0, 0);
+
+        // HEADER
+        JLabel label2 = new JLabel("SPARK SCHED");
+        label2.setFont(new Font("SERIF", Font.PLAIN, 35));
+        label2.setForeground(Color.BLACK);
+
+        GridBagConstraints gbcLabel2 = new GridBagConstraints();
+        gbcLabel2.gridx = 0;
+        gbcLabel2.gridy = 0;
+        gbcLabel2.anchor = GridBagConstraints.WEST;
+        gbcLabel2.insets = new Insets(50, -53, 0, 100);
+        topPanel.add(label2, gbcLabel2);
+
+        JPanel underlinePanel = new JPanel();
+        underlinePanel.setPreferredSize(new Dimension(95, 4));
+        underlinePanel.setBackground(Color.BLACK);
+
+        GridBagConstraints gbcUnderline = new GridBagConstraints();
+        gbcUnderline.gridx = 0;
+        gbcUnderline.gridy = 1;
+        gbcUnderline.anchor = GridBagConstraints.WEST;
+        gbcUnderline.insets = new Insets(0, -53, 0, 0);
+        topPanel.add(underlinePanel, gbcUnderline);
+
+        JLabel textLabel1 = new JLabel("<html> Turning plans into sparks of success!");
+        textLabel1.setFont(new Font("Canva Sans", Font.PLAIN, 14));
+        textLabel1.setForeground(Color.BLACK);
+
+        GridBagConstraints gbcTextLabel1 = new GridBagConstraints();
+        gbcTextLabel1.gridx = 0;
+        gbcTextLabel1.gridy = 1;
+        gbcTextLabel1.anchor = GridBagConstraints.EAST;
+        gbcTextLabel1.insets = new Insets(0, 50, 0, 10);
+        topPanel.add(textLabel1, gbcTextLabel1);
+
+        // TABLE
+        HighlightPanel head = new HighlightPanel();
+        head.setBounds(50, 140, 340, 33);
+
+        JLabel label1 = new JLabel("T A S K  S U M M A R Y");
+        label1.setForeground(Color.WHITE);
+        label1.setFont(new Font("Canva Sans", Font.BOLD, 14));
+        label1.setHorizontalAlignment(SwingConstants.CENTER);
+        label1.setBounds(10, 20, 280, 20);
+        head.add(label1);
+
+        taskTable = new DefaultTableModel();
+        taskTable.addColumn("DATE");
+        taskTable.addColumn("TIME");
+        taskTable.addColumn("TASK");
+        
+        table = new JTable(taskTable);
+        table.setBounds(50, 190, 400, 200);
+
+        JTableHeader header = table.getTableHeader();
+        header.setBackground(new Color(190, 182, 168));
+        header.setForeground(Color.WHITE);
+
+        table.getTableHeader().setReorderingAllowed(false);
+        table.getTableHeader().setResizingAllowed(false);
+
+        TableColumnModel columnModel = table.getColumnModel();
+        TableColumn columnDate = columnModel.getColumn(0);
+        TableColumn columnTime = columnModel.getColumn(1);
+        TableColumn columnTask = columnModel.getColumn(2);
+
+        columnDate.setPreferredWidth(50);
+        columnTime.setPreferredWidth(50);
+        columnTask.setPreferredWidth(150);
+
+        table.getTableHeader().setPreferredSize(new Dimension(table.getTableHeader().getWidth(), 30));
+        table.setRowHeight(25);
+
+        JScrollPane scrollPane = new JScrollPane(table);
+        scrollPane.setBounds(50, 195, 340, 400);
+
+
+        // FOOTER
+        JPanel bottomPanel = new JPanel(new GridBagLayout());
+        bottomPanel.setBackground(Color.WHITE);
+
+        RoundedButtonPanel clearButton = new RoundedButtonPanel("Clear");
+        clearButton.setFont(new Font("Canva Sans", Font.PLAIN, 14));
+        clearButton.setForeground(Color.BLACK);
+        clearButton.setPreferredSize(new Dimension(90, 30));
+
+        GridBagConstraints gbcClearButton = new GridBagConstraints();
+        gbcClearButton.gridx = 0;
+        gbcClearButton.gridy = 0;
+        gbcClearButton.anchor = GridBagConstraints.CENTER;
+        gbcClearButton.insets = new Insets(0, 0, 45, -185);
+        bottomPanel.add(clearButton, gbcClearButton);
+
+        // main panel - test
+
+        // left panel
+        mainPanel.add(leftPanel, BorderLayout.WEST);
+        leftPanel.add(head, BorderLayout.CENTER);
+        leftPanel.add(scrollPane, BorderLayout.CENTER);
+        leftPanel.add(topPanel, BorderLayout.NORTH);
+        leftPanel.add(bottomPanel, BorderLayout.SOUTH);
+
+        add(scrollPane);
+        add(mainPanel);
+        setLocationRelativeTo(null);
+        setVisible(true);
+    }
+    public static void main(String[] args){
+        SwingUtilities.invokeLater(() -> new PageOneGUI());
+    }
+}
