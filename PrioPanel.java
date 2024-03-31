@@ -2,6 +2,8 @@ package com.example;
 
 import java.awt.Color;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -10,22 +12,25 @@ public class PrioPanel extends JFrame {
     private JTable dataTable;
 
     public PrioPanel() {
-        setTitle("PrioPanel");
+        setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
 
+        ImageIcon logo = new ImageIcon("src/SparkSchedLogo.png");
+        setIconImage(logo.getImage());
+
         HighlightPanel taskSummary = new HighlightPanel();
-        taskSummary.setBounds(50, 80, 340, 33); 
+        taskSummary.setBounds(50, 80, 340, 33);
 
         JLabel label = new JLabel("T A S K  S U M M A R Y");
         label.setForeground(Color.WHITE);
         label.setFont(new Font("Canva Sans", Font.BOLD, 14));
-        label.setHorizontalAlignment(SwingConstants.CENTER); 
-        label.setBounds(10, 20, 280, 20); 
+        label.setHorizontalAlignment(SwingConstants.CENTER);
+        label.setBounds(10, 20, 280, 20);
         taskSummary.add(label);
-        add(taskSummary); 
+        add(taskSummary);
 
         tableModel = new DefaultTableModel();
         tableModel.addColumn("Date");
@@ -36,7 +41,7 @@ public class PrioPanel extends JFrame {
         dataTable.setBounds(50, 130, 400, 200);
 
         JTableHeader header = dataTable.getTableHeader();
-        header.setBackground(new Color(190, 182, 168)); 
+        header.setBackground(new Color(190, 182, 168));
         header.setForeground(Color.WHITE);
 
         dataTable.getTableHeader().setReorderingAllowed(false);
@@ -48,30 +53,30 @@ public class PrioPanel extends JFrame {
         TableColumn columnName = columnModel.getColumn(2);
 
         columnDate.setPreferredWidth(50);
-        columnTime.setPreferredWidth(50); 
-        columnName.setPreferredWidth(150); 
+        columnTime.setPreferredWidth(50);
+        columnName.setPreferredWidth(150);
 
         dataTable.getTableHeader().setPreferredSize(new Dimension(dataTable.getTableHeader().getWidth(), 30));
         dataTable.setRowHeight(25);
 
         JScrollPane scrollPane = new JScrollPane(dataTable);
-        scrollPane.setBounds(50, 135, taskSummary.getWidth(), 400); 
+        scrollPane.setBounds(50, 135, taskSummary.getWidth(), 400);
 
         JPanel tableInfo = new JPanel();
-        tableInfo.setBackground(getContentPane().getBackground()); 
+        tableInfo.setBackground(getContentPane().getBackground());
         tableInfo.setBounds(-10, 545, taskSummary.getWidth(), taskSummary.getHeight()+ 20);
 
         JLabel infoLabel = new JLabel("<html><div style='text-align: left;'><table><tr><td style='vertical-align: top;'>&#8226;</td><td>This table displays a summary of tasks</td></tr><tr><td></td><td>sorted by most recent additions</td></tr></table></div></html>");
-        infoLabel.setForeground(Color.BLACK);
-        infoLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+        infoLabel.setForeground(Color.decode("#737373"));
+        infoLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         tableInfo.add(infoLabel);
 
-        add(tableInfo); 
-        add(scrollPane); 
+        add(tableInfo);
+        add(scrollPane);
 
         // RIGHT First Task panel
         JPanel firstTaskPanel = new JPanel();
-        firstTaskPanel.setBounds(426, 60, 790, 100);
+        firstTaskPanel.setBounds(426, 50, 790, 70);
         //firstTaskPanel.setBackground(Color.ORANGE); // To show panel dimensions only ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧
         firstTaskPanel.setLayout(null);
         add(firstTaskPanel);
@@ -79,7 +84,7 @@ public class PrioPanel extends JFrame {
         // First Task label
         JLabel firstTaskLabel = new JLabel("What task would you like to start?");
         firstTaskLabel.setFont(new Font("Canva Sans", Font.PLAIN, 20));
-        firstTaskLabel.setBounds(10, 10, 305, 30);
+        firstTaskLabel.setBounds(10, 0, 305, 30);
         firstTaskPanel.add(firstTaskLabel);
 
         // First Task textfield
@@ -92,25 +97,25 @@ public class PrioPanel extends JFrame {
 
         // First Task button
         RoundedButtonPanel firstTaskButton = new RoundedButtonPanel("Enter");
-        firstTaskButton.setBounds(firstTaskPanel.getWidth()-100, 50, 100, 30);
+        firstTaskButton.setBounds(firstTaskPanel.getWidth()-100, firstTaskTextField.getY()+ 30 + 10, 100, 30);
         firstTaskPanel.add(firstTaskButton);
 
         // First Task info label
         JLabel firstTaskInfoLabel = new JLabel("<html>&#8226; Select task from 'Task Summary' to begin scheduling.</html>");
-        firstTaskInfoLabel.setBounds(10, 50, firstTaskPanel.getWidth()-firstTaskButton.getWidth(), 30);
+        firstTaskInfoLabel.setBounds(10, firstTaskButton.getY(), firstTaskPanel.getWidth()-firstTaskButton.getWidth(), 30);
         firstTaskInfoLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         firstTaskInfoLabel.setForeground(Color.decode("#737373"));
         firstTaskPanel.add(firstTaskInfoLabel);
 
         // Sched Summary panel
         JPanel schedSummaryPanel = new JPanel();
-        schedSummaryPanel.setBounds(426, firstTaskPanel.getY() + firstTaskPanel.getHeight() + 10, 790, 100);
+        schedSummaryPanel.setBounds(426, firstTaskPanel.getY() + firstTaskPanel.getHeight() + 15, 790, 100);
         schedSummaryPanel.setBackground(Color.decode("#D1CBBC"));
         schedSummaryPanel.setLayout(null);
         add(schedSummaryPanel);
 
         // Sched Summary label
-        JLabel  schedSummaryLabel = new JLabel("<html>&#8226; Start your day by accomplishing <br>" +
+        JLabel schedSummaryLabel = new JLabel("<html>&#8226; Start your day by accomplishing <br>" +
                 "<br>&#8226; The task is scheduled to start at </html>");
         schedSummaryLabel.setBounds(20, 10, 250, 80);
         schedSummaryLabel.setFont(new Font("Arial", Font.PLAIN, 17));
@@ -129,11 +134,11 @@ public class PrioPanel extends JFrame {
 
         // Top Priorities Panel
         HighlightPanel topPrioritiesPanel = new HighlightPanel();
-        topPrioritiesPanel.setBounds(426, schedSummaryPanel.getY() + schedSummaryPanel.getHeight() + 35, 790, 33);
+        topPrioritiesPanel.setBounds(426, schedSummaryPanel.getY() + schedSummaryPanel.getHeight() + 30, 790, 33);
         add(topPrioritiesPanel);
 
         // Top Priorities label
-        JLabel topPrioritiesLabel = new JLabel("T O P  P R I O R I T I E S");
+        JLabel topPrioritiesLabel = new JLabel("S C H E D U L E  R O U T I N E");
         topPrioritiesLabel.setForeground(Color.WHITE);
         topPrioritiesLabel.setFont(new Font("Canva Sans", Font.BOLD, 14));
         topPrioritiesLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -174,10 +179,27 @@ public class PrioPanel extends JFrame {
         topPrioritiesScrollPane.setBounds(426, topPrioritiesPanel.getY() + topPrioritiesPanel.getHeight() + 20, 790, 250);
         add(topPrioritiesScrollPane);
 
+        // Bottom Panel
+        JPanel bottomPanel = new JPanel();
+        bottomPanel.setBounds(426, 720 - 150 + 10, 790, 50);
+        //bottomPanel.setBackground(Color.PINK);
+        bottomPanel.setLayout(null);
+        add(bottomPanel);
+
+        JLabel bottomPanelLabel = new JLabel("Would you like to overview the whole schedule routine?");
+        bottomPanelLabel.setFont(new Font("Canva Sans", Font.PLAIN, 20));
+        bottomPanelLabel.setBounds(0, 10, 600, 30);
+        bottomPanel.add(bottomPanelLabel);
+
+        RoundedButtonPanel routineButton = new RoundedButtonPanel("Yes");
+        routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 10, 10, 70, 30 );
+        bottomPanel.add(routineButton);
+
+
         setVisible(true);
     }
 
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new PrioPanel());
+        SwingUtilities.invokeLater(PrioPanel::new);
     }
 }
