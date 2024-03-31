@@ -2,8 +2,7 @@ package com.example;
 
 import java.awt.Color;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
@@ -17,6 +16,7 @@ public class PrioPanel extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
+        setResizable(false);
 
         ImageIcon logo = new ImageIcon("src/SparkSchedLogo.png");
         setIconImage(logo.getImage());
@@ -64,7 +64,7 @@ public class PrioPanel extends JFrame {
 
         JPanel tableInfo = new JPanel();
         tableInfo.setBackground(getContentPane().getBackground());
-        tableInfo.setBounds(-10, 545, taskSummary.getWidth(), taskSummary.getHeight()+ 20);
+        tableInfo.setBounds(10, 545, taskSummary.getWidth(), taskSummary.getHeight()+ 20);
 
         JLabel infoLabel = new JLabel("<html><div style='text-align: left;'><table><tr><td style='vertical-align: top;'>&#8226;</td><td>This table displays a summary of tasks</td></tr><tr><td></td><td>sorted by most recent additions</td></tr></table></div></html>");
         infoLabel.setForeground(Color.decode("#737373"));
