@@ -17,7 +17,7 @@ public class PrioPanel extends JFrame {
         setLayout(null);
 
         HighlightPanel taskSummary = new HighlightPanel();
-        taskSummary.setBounds(30, 80, 340, 33); 
+        taskSummary.setBounds(50, 80, 340, 33); 
 
         JLabel label = new JLabel("T A S K  S U M M A R Y");
         label.setForeground(Color.WHITE);
@@ -33,7 +33,7 @@ public class PrioPanel extends JFrame {
         tableModel.addColumn("Task");
 
         dataTable = new JTable(tableModel);
-        dataTable.setBounds(30, 130, 400, 200);
+        dataTable.setBounds(50, 130, 400, 200);
 
         JTableHeader header = dataTable.getTableHeader();
         header.setBackground(new Color(190, 182, 168)); 
@@ -55,7 +55,7 @@ public class PrioPanel extends JFrame {
         dataTable.setRowHeight(25);
 
         JScrollPane scrollPane = new JScrollPane(dataTable);
-        scrollPane.setBounds(30, 135, taskSummary.getWidth(), 400); 
+        scrollPane.setBounds(50, 135, taskSummary.getWidth(), 400); 
 
         JPanel tableInfo = new JPanel();
         tableInfo.setBackground(getContentPane().getBackground()); 
