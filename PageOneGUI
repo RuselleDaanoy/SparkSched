@@ -35,7 +35,7 @@ public class PageOneGUI extends JFrame{
         // HEADER
         JLabel label2 = new JLabel("SPARK SCHED");
         label2.setFont(new Font("SERIF", Font.PLAIN, 35));
-        label2.setForeground(Color.BLACK);
+        label2.setForeground(new Color(84, 84, 84));
 
         GridBagConstraints gbcLabel2 = new GridBagConstraints();
         gbcLabel2.gridx = 0;
@@ -45,30 +45,30 @@ public class PageOneGUI extends JFrame{
         topPanel.add(label2, gbcLabel2);
 
         JPanel underlinePanel = new JPanel();
-        underlinePanel.setPreferredSize(new Dimension(95, 4));
-        underlinePanel.setBackground(Color.BLACK);
+        underlinePanel.setPreferredSize(new Dimension(150, 5));
+        underlinePanel.setBackground(new Color(84, 84, 84));
 
         GridBagConstraints gbcUnderline = new GridBagConstraints();
         gbcUnderline.gridx = 0;
         gbcUnderline.gridy = 1;
         gbcUnderline.anchor = GridBagConstraints.WEST;
-        gbcUnderline.insets = new Insets(0, -53, 0, 0);
+        gbcUnderline.insets = new Insets(0, -53, 35, 0);
         topPanel.add(underlinePanel, gbcUnderline);
 
-        JLabel textLabel1 = new JLabel("<html> Turning plans into sparks of success!");
+        JLabel textLabel1 = new JLabel("<html> Turning plans into sparks<br>of success");
         textLabel1.setFont(new Font("Canva Sans", Font.PLAIN, 14));
-        textLabel1.setForeground(Color.BLACK);
+        textLabel1.setForeground(new Color(84, 84, 84));
 
         GridBagConstraints gbcTextLabel1 = new GridBagConstraints();
         gbcTextLabel1.gridx = 0;
         gbcTextLabel1.gridy = 1;
         gbcTextLabel1.anchor = GridBagConstraints.EAST;
-        gbcTextLabel1.insets = new Insets(0, 50, 0, 10);
+        gbcTextLabel1.insets = new Insets(0, 50, 15, 10);
         topPanel.add(textLabel1, gbcTextLabel1);
 
         // TABLE
         HighlightPanel head = new HighlightPanel();
-        head.setBounds(50, 140, 340, 33);
+        head.setBounds(50, 145, 340, 33);
 
         JLabel label1 = new JLabel("T A S K  S U M M A R Y");
         label1.setForeground(Color.WHITE);
@@ -124,7 +124,18 @@ public class PageOneGUI extends JFrame{
         gbcClearButton.insets = new Insets(0, 0, 45, -185);
         bottomPanel.add(clearButton, gbcClearButton);
 
-        // main panel - test
+        JLabel tableDesc = new JLabel("<html><div style='text-align:left;'>" + 
+                                    "<p>* The table above display the summary of your<br>" +
+                                    "&nbsp;&nbsp; tasks sorted by the most recent additions.</p></div></html>");
+        tableDesc.setForeground(new Color(84, 84, 84));
+        tableDesc.setFont(new Font("Arial", Font.PLAIN, 11));
+    
+        GridBagConstraints gbcTableDesc = new GridBagConstraints();
+        gbcTableDesc.gridx = 0;
+        gbcTableDesc.gridy = 0;
+        gbcTableDesc.anchor = GridBagConstraints.WEST;
+        gbcTableDesc.insets = new Insets(0, -165, 52, 0);
+        bottomPanel.add(tableDesc, gbcTableDesc);
 
         // left panel
         mainPanel.add(leftPanel, BorderLayout.WEST);
