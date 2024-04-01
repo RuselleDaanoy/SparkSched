@@ -1,22 +1,31 @@
-package com.example;
 
 import java.awt.*;
-import java.awt.event.*;
-import java.util.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.awt.event.FocusEvent;
+import java.awt.event.FocusListener;
+import java.util.Stack;
+
 import javax.swing.*;
-import javax.swing.table.*;
+import javax.swing.table.DefaultTableModel;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableColumn;
+import javax.swing.table.TableColumnModel;
 
 public class PageOne extends JFrame{
     private JPanel leftPanel;
     private JTable table;
     private DefaultTableModel taskTable;
     private CurvedTextField taskText;
+    private  FrameController controller;
     private int taskCounter = 0;
 
-    public PageOne(){
+    public PageOne(FrameController controller){
+        this.controller = controller;
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setLocationRelativeTo(null);
 
         JPanel mainPanel = new JPanel(new BorderLayout());
 
@@ -121,7 +130,7 @@ public class PageOne extends JFrame{
                 taskTable.setRowCount(0);
             }
         });
-        
+
 
         GridBagConstraints gbcClearButton = new GridBagConstraints();
         gbcClearButton.gridx = 0;
@@ -210,10 +219,10 @@ public class PageOne extends JFrame{
                     JOptionPane.showMessageDialog(null, "You are allowed to enter up to 10 tasks only.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
                 }
             }
-                catch (NumberFormatException ex){
-                    JOptionPane.showMessageDialog(null, "Please enter a valid number.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
-                }
-            });
+            catch (NumberFormatException ex){
+                JOptionPane.showMessageDialog(null, "Please enter a valid number.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+            }
+        });
 
         button1Panel.add(button1);
         add(button1Panel);
@@ -342,7 +351,7 @@ public class PageOne extends JFrame{
                     String date = dateText.getText();
                     String time = timeText.getText() + " " + timeComboBox.getSelectedItem();
                     String task = actText.getText();
-    
+
                     int rowIndex = 0;
                     for (int i = 0; i < taskTable.getRowCount(); i++){
                         if (taskTable.getValueAt(i, 0) == null || taskTable.getValueAt(i, 0).toString().isEmpty()){
@@ -359,8 +368,8 @@ public class PageOne extends JFrame{
                 else{
                     JOptionPane.showMessageDialog(null, "You have reached the maximum number of tasks allowed.", "Maximum Task Limit Reached", JOptionPane.ERROR_MESSAGE);
                 }
-                
-               
+
+
             }
         });
 
@@ -463,12 +472,12 @@ public class PageOne extends JFrame{
 
         RoundedButtonPanel routineButton = new RoundedButtonPanel("Yes");
         routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 70, 10, 70, 30 );
+        routineButton.addActionListener(e -> this.controller.switchToPrioPanel());
         proceedPanel.add(routineButton);
 
         add(scrollPane);
         add(mainPanel);
 
-        setLocationRelativeTo(null);
         setVisible(true);
     }
 
@@ -499,7 +508,8 @@ public class PageOne extends JFrame{
         return taskStack;
     }
 
-    public static void main(String[] args){
+    /*public static void main(String[] args){
         SwingUtilities.invokeLater(() -> new PageOne());
     }
+    */
 }
