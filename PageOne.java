@@ -1,17 +1,10 @@
-package daa.project;
+package com.example;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
-import java.util.Stack;
-
+import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 
 public class PageOne extends JFrame{
     private JPanel leftPanel;
@@ -101,7 +94,7 @@ public class PageOne extends JFrame{
 
         TableColumnModel columnModel = table.getColumnModel();
         TableColumn columnDate = columnModel.getColumn(0);
-        TableColumn columnTime = columnModel.getColumn(1) + " " + timeComboBox.getSelectedItem();
+        TableColumn columnTime = columnModel.getColumn(1);
         TableColumn columnTask = columnModel.getColumn(2);
 
         columnDate.setPreferredWidth(50);
@@ -347,7 +340,7 @@ public class PageOne extends JFrame{
             public void actionPerformed(ActionEvent e){
                 if (taskCounter < getMaxTaskCount()){
                     String date = dateText.getText();
-                    String time = timeText.getText();
+                    String time = timeText.getText() + " " + timeComboBox.getSelectedItem();
                     String task = actText.getText();
     
                     int rowIndex = 0;
