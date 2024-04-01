@@ -5,15 +5,18 @@ import javax.swing.table.TableColumnModel;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
 
 public class SchedRoutineSummary extends JFrame {
 
     private DefaultTableModel tableModel;
     private JTable dataTable;
     private JLabel infoLabel;
+    private FrameController controller;
 
-    public SchedRoutineSummary() {
-
+    public SchedRoutineSummary(FrameController controller) {
+        this.controller = controller;
         setTitle("Spark Sched");
         setSize(460, 720);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
@@ -82,10 +85,23 @@ public class SchedRoutineSummary extends JFrame {
             }
         });
 
+        // Add window listener to handle window close event
+        addWindowListener(new WindowAdapter() {
+            @Override
+            public void windowClosed(WindowEvent e) {
+                controller.schedRoutineSummaryClosed();
+            }
+        });
+
+
+
+
         setVisible(true);
     }
 
+    /*
     public static void main(String[] args) {
         SwingUtilities.invokeLater(SchedRoutineSummary::new);
     }
+     */
 }
