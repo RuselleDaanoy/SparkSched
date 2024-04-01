@@ -207,13 +207,8 @@ public class ModifiedPageOne extends JFrame{
             try{
                 int taskCount = Integer.parseInt(numTasks);
                 if (taskCount >= 1 && taskCount <= 10){
-                    taskTable.setRowCount(0);
-
-                    for (int i = 0; i < taskCount; i++){
-                        taskTable.addRow(new Object[]{"", "", ""});
-
-                    }
-                    table.repaint();
+                    taskTable.setRowCount(taskCount);
+                    JOptionPane.showMessageDialog(null, "Number of tasks set to " + taskCount, "Number of Tasks Set", JOptionPane.INFORMATION_MESSAGE);
                 }
 
                 else{
@@ -348,13 +343,21 @@ public class ModifiedPageOne extends JFrame{
         dateButton.addActionListener(new ActionListener() {
             @Override
             public void actionPerformed(ActionEvent e){
-
                 if (taskCounter < getMaxTaskCount()){
                     String date = dateText.getText();
                     String time = timeText.getText();
                     String task = actText.getText();
     
-                    taskTable.addRow(new Object[]{date, time, task});
+                    int rowIndex = 0;
+                    for (int i = 0; i < taskTable.getRowCount(); i++){
+                        if (taskTable.getValueAt(i, 0) == null || taskTable.getValueAt(i, 0).toString().isEmpty()){
+                            rowIndex = i;
+                            break;
+                        }
+                    }
+                    taskTable.setValueAt(date, rowIndex, 0);
+                    taskTable.setValueAt(time, rowIndex, 1);
+                    taskTable.setValueAt(task, rowIndex, 2);
 
                     taskCounter++;
                 }
