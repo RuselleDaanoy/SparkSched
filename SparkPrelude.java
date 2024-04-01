@@ -4,14 +4,15 @@ import java.io.File;
 import java.io.IOException;
 
 public class SparkPrelude extends JFrame {
+    private FrameController controller;
 
-    public SparkPrelude() {
+    public SparkPrelude(FrameController controller) {
+        this.controller = controller;
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
-        setVisible(true);
 
         ImageIcon logo = new ImageIcon("src/SparkSchedLogo.png");
         setIconImage(logo.getImage());
@@ -59,7 +60,12 @@ public class SparkPrelude extends JFrame {
         RoundedButtonPanel createSched = new RoundedButtonPanel("Create Schedule");
         createSched.setFont(new Font("Arial", Font.PLAIN, 14));
         createSched.setBounds(710, 370, 150, 40);
+
+        createSched.addActionListener(e -> controller.switchToPageOne());
+
         add(createSched);
+
+        setVisible(true);
         }
 
 
@@ -82,7 +88,11 @@ public class SparkPrelude extends JFrame {
         }
     }
 
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(SparkPrelude::new);
-    }
+
+    /*public static void main(String[] args) {
+        FrameController controller = new FrameController(); // Assuming you have a constructor for FrameController
+        SwingUtilities.invokeLater(() -> new SparkPrelude(controller));
+
+    }*/
+
 }
