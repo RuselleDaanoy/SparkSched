@@ -1,22 +1,20 @@
-package com.example;
-
 import java.awt.Color;
 import java.awt.*;
-import java.awt.event.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
 public class PrioPanel extends JFrame {
     private DefaultTableModel tableModel;
     private JTable dataTable;
+    private FrameController controller;
 
-    public PrioPanel() {
+    public PrioPanel(FrameController controller) {
+        this.controller = controller;
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
-        setResizable(false);
 
         ImageIcon logo = new ImageIcon("src/SparkSchedLogo.png");
         setIconImage(logo.getImage());
@@ -64,7 +62,7 @@ public class PrioPanel extends JFrame {
 
         JPanel tableInfo = new JPanel();
         tableInfo.setBackground(getContentPane().getBackground());
-        tableInfo.setBounds(10, 545, taskSummary.getWidth(), taskSummary.getHeight()+ 20);
+        tableInfo.setBounds(-10, 545, taskSummary.getWidth(), taskSummary.getHeight()+ 20);
 
         JLabel infoLabel = new JLabel("<html><div style='text-align: left;'><table><tr><td style='vertical-align: top;'>&#8226;</td><td>This table displays a summary of tasks</td></tr><tr><td></td><td>sorted by most recent additions</td></tr></table></div></html>");
         infoLabel.setForeground(Color.decode("#737373"));
@@ -191,15 +189,23 @@ public class PrioPanel extends JFrame {
         bottomPanelLabel.setBounds(0, 10, 600, 30);
         bottomPanel.add(bottomPanelLabel);
 
-        RoundedButtonPanel routineButton = new RoundedButtonPanel("Yes");
-        routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 10, 10, 70, 30 );
+        RoundedButtonPanel routineButton = new RoundedButtonPanel("Proceed");
+        routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 10, 10, 100, 30 );
+        routineButton.addActionListener(e -> controller.switchToSchedRoutineSummary());
+
+
+
         bottomPanel.add(routineButton);
 
 
         setVisible(true);
     }
 
+
+    /*
     public static void main(String[] args) {
-        SwingUtilities.invokeLater(PrioPanel::new);
+        SwingUtilities.invokeLater(() -> new PrioPanel(this));
     }
+     */
+
 }
