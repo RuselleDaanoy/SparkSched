@@ -101,7 +101,7 @@ public class PageOne extends JFrame{
 
         TableColumnModel columnModel = table.getColumnModel();
         TableColumn columnDate = columnModel.getColumn(0);
-        TableColumn columnTime = columnModel.getColumn(1);
+        TableColumn columnTime = columnModel.getColumn(1) + " " + timeComboBox.getSelectedItem();
         TableColumn columnTask = columnModel.getColumn(2);
 
         columnDate.setPreferredWidth(50);
