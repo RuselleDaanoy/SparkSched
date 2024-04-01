@@ -1,4 +1,8 @@
+package daa.project;
+
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
 import javax.swing.*;
@@ -11,16 +15,17 @@ public class ModifiedPageOne extends JFrame{
     private JPanel leftPanel;
     private JTable table;
     private DefaultTableModel taskTable;
+    private CurvedTextField taskText;
+    private int taskCounter = 0;
 
     public ModifiedPageOne(){
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 
-        // main - for test only
         JPanel mainPanel = new JPanel(new BorderLayout());
 
-        // left panel
+        // LEFT SIDE
         leftPanel = new JPanel(new BorderLayout());
         leftPanel.setPreferredSize(new Dimension(425, 720));
         leftPanel.setBackground(Color.WHITE);
@@ -55,8 +60,8 @@ public class ModifiedPageOne extends JFrame{
         gbcUnderline.insets = new Insets(0, 22, 35, 0);
         topPanel.add(underlinePanel, gbcUnderline);
 
-        JLabel textLabel1 = new JLabel("<html> Turning plans into sparks<br>of success");
-        textLabel1.setFont(new Font("Canva Sans", Font.PLAIN, 14));
+        JLabel textLabel1 = new JLabel("<html> Turning plans into sparks<br>of success.");
+        textLabel1.setFont(new Font("buttonCanva Sans", Font.PLAIN, 14));
         textLabel1.setForeground(new Color(84, 84, 84));
 
         GridBagConstraints gbcTextLabel1 = new GridBagConstraints();
@@ -116,6 +121,12 @@ public class ModifiedPageOne extends JFrame{
         clearButton.setFont(new Font("Canva Sans", Font.PLAIN, 14));
         clearButton.setForeground(Color.BLACK);
         clearButton.setPreferredSize(new Dimension(90, 30));
+        clearButton.addActionListener(new ActionListener() {
+            public void actionPerformed(ActionEvent e){
+                taskTable.setRowCount(0);
+            }
+        });
+        
 
         GridBagConstraints gbcClearButton = new GridBagConstraints();
         gbcClearButton.gridx = 0;
@@ -125,7 +136,7 @@ public class ModifiedPageOne extends JFrame{
         bottomPanel.add(clearButton, gbcClearButton);
 
         JLabel tableDesc = new JLabel("<html><div style='text-align:left;'>" +
-                "<p>* The table above display the summary of your<br>" +
+                "<p>* The table above displays the summary of your<br>" +
                 "&nbsp;&nbsp; tasks sorted by the most recent additions.</p></div></html>");
         tableDesc.setForeground(new Color(84, 84, 84));
         tableDesc.setFont(new Font("Arial", Font.PLAIN, 11));
@@ -137,15 +148,14 @@ public class ModifiedPageOne extends JFrame{
         gbcTableDesc.insets = new Insets(0, -90, 52, 0);
         bottomPanel.add(tableDesc, gbcTableDesc);
 
-        // left panel
         mainPanel.add(leftPanel, BorderLayout.WEST);
         leftPanel.add(head, BorderLayout.CENTER);
         leftPanel.add(scrollPane, BorderLayout.CENTER);
         leftPanel.add(topPanel, BorderLayout.NORTH);
         leftPanel.add(bottomPanel, BorderLayout.SOUTH);
 
-        // right side
 
+        // RIGHT SIDE
         JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
         taskPanel.setBackground(getContentPane().getBackground());
         taskPanel.setBounds(426, 50, 350, 65);
@@ -156,7 +166,7 @@ public class ModifiedPageOne extends JFrame{
         taskLabel.setHorizontalAlignment(SwingConstants.CENTER);
         taskPanel.add(taskLabel);
 
-        CurvedTextField taskText = new CurvedTextField();
+        taskText = new CurvedTextField();
         taskText.setPreferredSize(new Dimension(140,30));
         taskText.setText("1-10");
         taskText.setForeground(Color.GRAY);
@@ -191,6 +201,29 @@ public class ModifiedPageOne extends JFrame{
         RoundedButtonPanel button1 = new RoundedButtonPanel("Set");
         button1.setFont(new Font("Canva Sans", Font.PLAIN, 12));
         button1.setPreferredSize(new Dimension(80, 30));
+        button1.addActionListener(e -> {
+            String numTasks = taskText.getText();
+
+            try{
+                int taskCount = Integer.parseInt(numTasks);
+                if (taskCount >= 1 && taskCount <= 10){
+                    taskTable.setRowCount(0);
+
+                    for (int i = 0; i < taskCount; i++){
+                        taskTable.addRow(new Object[]{"", "", ""});
+
+                    }
+                    table.repaint();
+                }
+
+                else{
+                    JOptionPane.showMessageDialog(null, "You are allowed to enter up to 10 tasks only.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+                catch (NumberFormatException ex){
+                    JOptionPane.showMessageDialog(null, "Please enter a valid number.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
+                }
+            });
 
         button1Panel.add(button1);
         add(button1Panel);
@@ -312,6 +345,27 @@ public class ModifiedPageOne extends JFrame{
         datePanel.add(dateButton);
         add(datePanel);
 
+        dateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e){
+
+                if (taskCounter < getMaxTaskCount()){
+                    String date = dateText.getText();
+                    String time = timeText.getText();
+                    String task = actText.getText();
+    
+                    taskTable.addRow(new Object[]{date, time, task});
+
+                    taskCounter++;
+                }
+                else{
+                    JOptionPane.showMessageDialog(null, "You have reached the maximum number of tasks allowed.", "Maximum Task Limit Reached", JOptionPane.ERROR_MESSAGE);
+                }
+                
+               
+            }
+        });
+
         JPanel bulletPanel = new JPanel();
         bulletPanel.setBackground(getContentPane().getBackground());
         bulletPanel.setBounds(426, 215, 320, 50);
@@ -321,7 +375,6 @@ public class ModifiedPageOne extends JFrame{
         bulletLabel.setFont(new Font("Arial", Font.PLAIN, 12));
         bulletPanel.add(bulletLabel);
         add(bulletPanel);
-
 
         JPanel outputPanel = new JPanel();
         outputPanel.setBackground(new Color(209, 203, 188));
@@ -414,13 +467,27 @@ public class ModifiedPageOne extends JFrame{
         routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 70, 10, 70, 30 );
         proceedPanel.add(routineButton);
 
-
         add(scrollPane);
         add(mainPanel);
 
         setLocationRelativeTo(null);
         setVisible(true);
+
+        // 
+
     }
+
+    private int getMaxTaskCount(){
+        String numTasks = taskText.getText();
+
+        try {
+            return Integer.parseInt(numTasks);
+        }
+        catch (NumberFormatException e){
+            return 10;
+        }
+    }
+
     public static void main(String[] args){
         SwingUtilities.invokeLater(() -> new ModifiedPageOne());
     }
