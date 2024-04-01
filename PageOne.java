@@ -5,20 +5,22 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.FocusEvent;
 import java.awt.event.FocusListener;
+import java.util.Stack;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableColumn;
 import javax.swing.table.TableColumnModel;
 
-public class ModifiedPageOne extends JFrame{
+public class PageOne extends JFrame{
     private JPanel leftPanel;
     private JTable table;
     private DefaultTableModel taskTable;
     private CurvedTextField taskText;
     private int taskCounter = 0;
 
-    public ModifiedPageOne(){
+    public PageOne(){
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -475,9 +477,6 @@ public class ModifiedPageOne extends JFrame{
 
         setLocationRelativeTo(null);
         setVisible(true);
-
-        // 
-
     }
 
     private int getMaxTaskCount(){
@@ -491,7 +490,23 @@ public class ModifiedPageOne extends JFrame{
         }
     }
 
+    public Stack<String[]> getTaskStack(){
+        Stack<String[]> taskStack = new Stack<>();
+
+        for (int i = 0; i < taskTable.getRowCount(); i++){
+            String date = (String) taskTable.getValueAt(i, 0);
+            String time = (String) taskTable.getValueAt(i, 1);
+            String task = (String) taskTable.getValueAt(i, 2);
+
+            if (date != null && time != null && task != null){
+                String[] taskData = {date, time, task};
+                taskStack.push(taskData);
+            }
+        }
+        return taskStack;
+    }
+
     public static void main(String[] args){
-        SwingUtilities.invokeLater(() -> new ModifiedPageOne());
+        SwingUtilities.invokeLater(() -> new PageOne());
     }
 }
