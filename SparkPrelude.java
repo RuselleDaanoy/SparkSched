@@ -53,7 +53,7 @@ public class SparkPrelude extends JFrame {
         add(shapePanel);
 
         JLabel textPanel = new JLabel("<html>Turning plans into the spark<br>of success.</html>");
-        textPanel.setBounds(660, 280, 250, 50);
+        textPanel.setBounds(660, 271, 250, 50);
         textPanel.setFont(new Font("Canva Sans", Font.PLAIN, 16));
         add(textPanel);
 
