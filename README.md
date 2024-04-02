@@ -15,7 +15,7 @@ SparkSched provides functionality to input tasks along with their respective dat
   
 ## Contributors
 
-- [Venus Ruselle B. Daanoy](https://github.com/RuselleDaanoy)
-- [Pia Katleya V. Macalanda](https://github.com/pikavama)
-- [Andrea Louise Tatoy](https://github.com/AndreaTatoy)
-- [John Keith S. Mercado](https://github.com/KeithMercado)
+- [Venus Ruselle B. Daanoy](https://github.com/RuselleDaanoy) - Developer & Tech Lead
+- [Pia Katleya V. Macalanda](https://github.com/pikavama) - Developer & UX Designer
+- [Andrea Louise Tatoy](https://github.com/AndreaTatoy) - Developer
+- [John Keith S. Mercado](https://github.com/KeithMercado) - Developer
