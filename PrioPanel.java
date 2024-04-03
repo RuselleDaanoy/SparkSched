@@ -272,7 +272,9 @@ public class PrioPanel extends JFrame {
 
         RoundedButtonPanel routineButton = new RoundedButtonPanel("Proceed");
         routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 10, 10, 100, 30);
-        routineButton.addActionListener(e -> controller.switchToSchedRoutineSummary());
+        routineButton.addActionListener(e -> {
+            controller.switchToSchedRoutineSummary(getTopPrioritiesTableModel()); // This line triggers the switch and passes the data
+        });
         bottomPanel.add(routineButton);
 
         setVisible(true);
@@ -308,5 +310,9 @@ public class PrioPanel extends JFrame {
                 break;
             }
         }
+    }
+
+    public DefaultTableModel getTopPrioritiesTableModel() {
+        return topPrioritiesTableModel;
     }
 }
