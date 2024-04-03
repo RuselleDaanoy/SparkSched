@@ -1,10 +1,10 @@
-import javax.swing.*;
+package com.example;
+
 public class FrameController {
 
     private SparkPrelude sparkPrelude;
     private PageOne pageOne;
     private PrioPanel prioPanel;
-
     private SchedRoutineSummary schedRoutineSummary;
 
     public FrameController(){
@@ -20,7 +20,7 @@ public class FrameController {
 
     public void switchToPrioPanel(){
         if (prioPanel == null){
-            prioPanel = new PrioPanel(this);
+            prioPanel = new PrioPanel(this, pageOne.getTaskStack());
         }
         pageOne.dispose();
     }
@@ -30,12 +30,11 @@ public class FrameController {
             schedRoutineSummary = new SchedRoutineSummary(this);
         }
     }
+
     public void schedRoutineSummaryClosed(){
         // Reset SchedRoutineSummary instance when closed
         schedRoutineSummary = null;
     }
-
-
 
     public static void main(String[] args) {
         new FrameController();
