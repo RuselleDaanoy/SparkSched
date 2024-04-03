@@ -1,5 +1,7 @@
 package com.example;
 
+import javax.swing.table.DefaultTableModel;
+
 public class FrameController {
 
     private SparkPrelude sparkPrelude;
@@ -25,10 +27,12 @@ public class FrameController {
         pageOne.dispose();
     }
 
-    public void  switchToSchedRoutineSummary(){
-        if(schedRoutineSummary == null){
+    public void switchToSchedRoutineSummary(DefaultTableModel model) {
+        if (schedRoutineSummary == null) {
             schedRoutineSummary = new SchedRoutineSummary(this);
         }
+        schedRoutineSummary.setDataTable(model);
+        schedRoutineSummary.setVisible(true);
     }
 
     public void schedRoutineSummaryClosed(){
