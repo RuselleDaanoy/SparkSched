@@ -1,20 +1,20 @@
+package com.example;
+
 import javax.swing.*;
 import java.awt.*;
-import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 
 public class SparkPrelude extends JFrame {
-    private FrameController controller;
-
+    
     public SparkPrelude(FrameController controller) {
-        this.controller = controller;
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
 
-        ImageIcon logo = new ImageIcon("src/SparkSchedLogo.png");
+        ImageIcon logo = new ImageIcon(getClass().getResource("SparkSchedLogo.png"));
         setIconImage(logo.getImage());
 
         JPanel namePanel = new JPanel();
@@ -24,7 +24,7 @@ public class SparkPrelude extends JFrame {
         add(namePanel);
 
         // Load the custom font
-        Font customFont = loadFont("src/HeyGotcha-Regular.ttf", 80);
+        Font customFont = loadFont("HeyGotcha-Regular.ttf", 80);
 
         // JLabels for each letter in "SPARK"
         JLabel[] letterLabels = new JLabel[5];
@@ -72,15 +72,20 @@ public class SparkPrelude extends JFrame {
 
     private Font loadFont(String fontPath, float fontSize) {
         try {
-            // Load the font file
-            File fontFile = new File(fontPath);
+            // load font as a resource stream from the classpath
+            InputStream fontStream = getClass().getResourceAsStream(fontPath);
+            if (fontStream == null) {
+                throw new IOException("Font file not found in the classpath: " + fontPath);
+            }
 
-            // Register the font with the Graphics Environment
-            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontFile);
+            // font from the stream
+            Font customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream);
+
+            // register the font with the Graphics Environment
             GraphicsEnvironment ge = GraphicsEnvironment.getLocalGraphicsEnvironment();
             ge.registerFont(customFont);
 
-            // Create a font object from the font file
+            // derive and return the font with the specified size
             return customFont.deriveFont(fontSize);
         } catch (IOException | FontFormatException e) {
             e.printStackTrace();
