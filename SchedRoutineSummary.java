@@ -1,3 +1,5 @@
+package com.example;
+
 import javax.swing.*;
 import javax.swing.table.DefaultTableModel;
 import javax.swing.table.JTableHeader;
@@ -13,16 +15,14 @@ public class SchedRoutineSummary extends JFrame {
     private DefaultTableModel tableModel;
     private JTable dataTable;
     private JLabel infoLabel;
-    private FrameController controller;
 
     public SchedRoutineSummary(FrameController controller) {
-        this.controller = controller;
         setTitle("Spark Sched");
         setSize(460, 720);
         setDefaultCloseOperation(JFrame.DISPOSE_ON_CLOSE);
         setLocationRelativeTo(null);
 
-        ImageIcon logo = new ImageIcon("src/SparkSchedLogo.png");
+        ImageIcon logo = new ImageIcon(getClass().getResource("SparkSchedLogo.png"));
         setIconImage(logo.getImage());
 
         JPanel mainPanel = new JPanel(new BorderLayout());
@@ -97,6 +97,11 @@ public class SchedRoutineSummary extends JFrame {
 
 
         setVisible(true);
+    }
+
+    public void setDataTable(DefaultTableModel model) {
+        tableModel = model;
+        dataTable.setModel(tableModel);
     }
 
     /*
