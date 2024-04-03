@@ -1,33 +1,32 @@
+package com.example;
 
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
-import java.awt.event.FocusEvent;
-import java.awt.event.FocusListener;
+import java.awt.event.*;
+import java.io.IOException;
+import java.io.InputStream;
 import java.util.Stack;
-
 import javax.swing.*;
-import javax.swing.table.DefaultTableModel;
-import javax.swing.table.JTableHeader;
-import javax.swing.table.TableColumn;
-import javax.swing.table.TableColumnModel;
+import javax.swing.table.*;
 
 public class PageOne extends JFrame{
     private JPanel leftPanel;
-    private JTable table;
+    private JTable table, topPrioritiesTable;;
     private DefaultTableModel taskTable;
     private CurvedTextField taskText;
-    private  FrameController controller;
+    private JTextField taskInputField, lastColumnOutput;
     private int taskCounter = 0;
 
     public PageOne(FrameController controller){
-        this.controller = controller;
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
 
+        ImageIcon logo = new ImageIcon(getClass().getResource("SparkSchedLogo.png"));
+        setIconImage(logo.getImage());
+
         JPanel mainPanel = new JPanel(new BorderLayout());
+        mainPanel.setBackground(Color.WHITE);
 
         // LEFT SIDE
         leftPanel = new JPanel(new BorderLayout());
@@ -46,6 +45,22 @@ public class PageOne extends JFrame{
         label2.setFont(new Font("SERIF", Font.PLAIN, 35));
         label2.setForeground(new Color(84, 84, 84));
 
+        Font customFont = null;
+        try {
+            InputStream fontStream = getClass().getResourceAsStream("HeyGotcha-Regular.ttf");
+            customFont = Font.createFont(Font.TRUETYPE_FONT, fontStream).deriveFont(55f);
+        } catch (IOException | FontFormatException e) {
+            e.printStackTrace();
+        }
+
+        if (customFont != null) {
+            label2.setFont(customFont);
+        } else {
+            // Fallback to default font if custom font loading fails
+            label2.setFont(new Font("SERIF", Font.PLAIN, 35));
+        }
+
+        // Add the label to the topPanel with GridBagConstraints
         GridBagConstraints gbcLabel2 = new GridBagConstraints();
         gbcLabel2.gridx = 0;
         gbcLabel2.gridy = 0;
@@ -54,7 +69,7 @@ public class PageOne extends JFrame{
         topPanel.add(label2, gbcLabel2);
 
         JPanel underlinePanel = new JPanel();
-        underlinePanel.setPreferredSize(new Dimension(150, 5));
+        underlinePanel.setPreferredSize(new Dimension(165, 5));
         underlinePanel.setBackground(new Color(84, 84, 84));
 
         GridBagConstraints gbcUnderline = new GridBagConstraints();
@@ -65,14 +80,14 @@ public class PageOne extends JFrame{
         topPanel.add(underlinePanel, gbcUnderline);
 
         JLabel textLabel1 = new JLabel("<html> Turning plans into sparks<br>of success.");
-        textLabel1.setFont(new Font("buttonCanva Sans", Font.PLAIN, 14));
+        textLabel1.setFont(new Font("Canva Sans", Font.PLAIN, 12));
         textLabel1.setForeground(new Color(84, 84, 84));
 
         GridBagConstraints gbcTextLabel1 = new GridBagConstraints();
         gbcTextLabel1.gridx = 0;
         gbcTextLabel1.gridy = 1;
-        gbcTextLabel1.anchor = GridBagConstraints.EAST;
-        gbcTextLabel1.insets = new Insets(0, 50, 15, 10);
+        gbcTextLabel1.anchor = GridBagConstraints.WEST;
+        gbcTextLabel1.insets = new Insets(-3, 195, 15, 10);
         topPanel.add(textLabel1, gbcTextLabel1);
 
         // TABLE
@@ -127,7 +142,12 @@ public class PageOne extends JFrame{
         clearButton.setPreferredSize(new Dimension(90, 30));
         clearButton.addActionListener(new ActionListener() {
             public void actionPerformed(ActionEvent e){
-                taskTable.setRowCount(0);
+                int option = JOptionPane.showConfirmDialog(null, "Are you sure you want to clear all inputs?", "Confirmation", JOptionPane.YES_NO_OPTION);
+
+                if (option == JOptionPane.YES_OPTION){
+                    taskTable.setRowCount(0);
+                    taskInputField.setText("");
+                }
             }
         });
 
@@ -161,7 +181,7 @@ public class PageOne extends JFrame{
 
         // RIGHT SIDE
         JPanel taskPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        taskPanel.setBackground(getContentPane().getBackground());
+        taskPanel.setBackground(Color.WHITE);
         taskPanel.setBounds(426, 50, 350, 65);
 
         JLabel taskLabel = new JLabel("Enter number of task  ");
@@ -199,7 +219,7 @@ public class PageOne extends JFrame{
         add(taskPanel);
 
         JPanel button1Panel = new JPanel();
-        button1Panel.setBackground(getContentPane().getBackground());
+        button1Panel.setBackground(Color.WHITE);
         button1Panel.setBounds(800, 50, 120, 50);
 
         RoundedButtonPanel button1 = new RoundedButtonPanel("Set");
@@ -208,42 +228,45 @@ public class PageOne extends JFrame{
         button1.addActionListener(e -> {
             String numTasks = taskText.getText();
 
-            try{
+            try {
                 int taskCount = Integer.parseInt(numTasks);
-                if (taskCount >= 1 && taskCount <= 10){
+                if (taskCount >= 1 && taskCount <= 10) {
                     taskTable.setRowCount(taskCount);
                     JOptionPane.showMessageDialog(null, "Number of tasks set to " + taskCount, "Number of Tasks Set", JOptionPane.INFORMATION_MESSAGE);
-                }
-
-                else{
+                    
+                    // Calculate and display the result in taskInputField
+                    double halvedTaskCount = (double) taskCount / 2;
+                    int result = (int) Math.ceil(halvedTaskCount);
+                    taskInputField.setText(String.valueOf(result));
+                } else {
                     JOptionPane.showMessageDialog(null, "You are allowed to enter up to 10 tasks only.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
                 }
-            }
-            catch (NumberFormatException ex){
+            } catch (NumberFormatException ex) {
                 JOptionPane.showMessageDialog(null, "Please enter a valid number.", "Invalid Input", JOptionPane.ERROR_MESSAGE);
             }
         });
+
 
         button1Panel.add(button1);
         add(button1Panel);
 
         JPanel actPanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        actPanel.setBackground(getContentPane().getBackground());
+        actPanel.setBackground(Color.WHITE);
         actPanel.setBounds(426, 125, 790, 40);
 
         JLabel actLabel = new JLabel("Name of the activity  ");
         actLabel.setForeground(Color.BLACK);
-        actLabel.setFont(new Font("Canva Sans", Font.PLAIN, 20));
+        actLabel.setFont(new Font("Canva Sans", Font.PLAIN, 18));
         actPanel.add(actLabel);
 
         CurvedTextField actText = new CurvedTextField();
         actText.setPreferredSize(new Dimension(590,30));
-        actText.setText("Type name here");
+        actText.setText("Type task name here");
         actText.setForeground(Color.GRAY);
         actText.addFocusListener(new FocusListener() {
             @Override
             public void focusGained(FocusEvent e) {
-                if (actText.getText().equals("Type name here")) {
+                if (actText.getText().equals("Type task name here")) {
                     actText.setText("");
                     actText.setForeground(Color.BLACK);
                 }
@@ -261,12 +284,12 @@ public class PageOne extends JFrame{
         add(actPanel);
 
         JPanel timePanel = new JPanel(new FlowLayout(FlowLayout.LEFT));
-        timePanel.setBackground(getContentPane().getBackground());
+        timePanel.setBackground(Color.WHITE);
         timePanel.setBounds(426, 175, 250, 40);
 
         JLabel timeLabel = new JLabel("Time ");
         timeLabel.setForeground(Color.BLACK);
-        timeLabel.setFont(new Font("Canva Sans", Font.PLAIN, 20));
+        timeLabel.setFont(new Font("Canva Sans", Font.PLAIN, 18));
         timeLabel.setHorizontalAlignment(SwingConstants.LEFT);
         timePanel.add(timeLabel);
 
@@ -301,12 +324,12 @@ public class PageOne extends JFrame{
         add(timePanel);
 
         JPanel datePanel = new JPanel();
-        datePanel.setBackground(getContentPane().getBackground());
-        datePanel.setBounds(750, 175, 300, 50);
+        datePanel.setBackground(Color.WHITE);
+        datePanel.setBounds(750, 175, 350, 50);
 
         JLabel dateLabel = new JLabel("Date ");
         dateLabel.setForeground(Color.BLACK);
-        dateLabel.setFont(new Font("Canva Sans", Font.PLAIN, 20));
+        dateLabel.setFont(new Font("Canva Sans", Font.PLAIN, 18));
         dateLabel.setHorizontalAlignment(SwingConstants.LEFT);
         datePanel.add(dateLabel);
 
@@ -334,7 +357,7 @@ public class PageOne extends JFrame{
         datePanel.add(dateText);
 
         JPanel extraPanel = new JPanel();
-        extraPanel.setBackground(getContentPane().getBackground());
+        extraPanel.setBackground(Color.WHITE);
         extraPanel.setPreferredSize(new Dimension(20, 0));
         datePanel.add(extraPanel);
 
@@ -346,15 +369,20 @@ public class PageOne extends JFrame{
 
         dateButton.addActionListener(new ActionListener() {
             @Override
-            public void actionPerformed(ActionEvent e){
-                if (taskCounter < getMaxTaskCount()){
-                    String date = dateText.getText();
-                    String time = timeText.getText() + " " + timeComboBox.getSelectedItem();
-                    String task = actText.getText();
+            public void actionPerformed(ActionEvent e) {
+                String date = dateText.getText();
+                String time = timeText.getText() + " " + timeComboBox.getSelectedItem();
+                String task = actText.getText();
 
+                if (date.equals("YYYY-MM-DD") || time.equals("hh:mm") || task.equals("Type task name here")){
+                    JOptionPane.showMessageDialog(null, "Please fill in all fields before adding a task.", "Incomplete Information", JOptionPane.WARNING_MESSAGE);
+                    return;
+                }
+
+                if (taskCounter < getMaxTaskCount()) {
                     int rowIndex = 0;
-                    for (int i = 0; i < taskTable.getRowCount(); i++){
-                        if (taskTable.getValueAt(i, 0) == null || taskTable.getValueAt(i, 0).toString().isEmpty()){
+                    for (int i = 0; i < taskTable.getRowCount(); i++) {
+                        if (taskTable.getValueAt(i, 0) == null || taskTable.getValueAt(i, 0).toString().isEmpty()) {
                             rowIndex = i;
                             break;
                         }
@@ -363,42 +391,82 @@ public class PageOne extends JFrame{
                     taskTable.setValueAt(time, rowIndex, 1);
                     taskTable.setValueAt(task, rowIndex, 2);
 
+                    if (taskCounter == getMaxTaskCount() - 1) {
+                        int tasksToPrint = Math.min(taskCounter, Integer.parseInt(taskInputField.getText()));
+
+                        // Add rows from taskTable to topPrioritiesTable up to the taskInputField count
+                        DefaultTableModel topPrioritiesTableModel = (DefaultTableModel) topPrioritiesTable.getModel();
+                        for (int i = 0; i < tasksToPrint; i++) {
+                            Object[] rowData = new Object[taskTable.getColumnCount()];
+                            for (int j = 0; j < taskTable.getColumnCount(); j++) {
+                                rowData[j] = taskTable.getValueAt(i, j);
+                            }
+                            topPrioritiesTableModel.addRow(rowData);
+                        }
+                        sortTable(topPrioritiesTableModel);
+
+                        int lastRowIndex = topPrioritiesTableModel.getRowCount() - 1;
+                        String lastDate = (String) topPrioritiesTableModel.getValueAt(lastRowIndex, 0);
+                        String lastTime = (String) topPrioritiesTableModel.getValueAt(lastRowIndex, 1);
+
+                        String outputText = lastDate + " and " + lastTime;
+
+                        lastColumnOutput.setText(outputText);
+                    }
                     taskCounter++;
+                } else {
+                    JOptionPane.showMessageDialog(null, "You have reached the maximum number of tasks allowed.", "Maximum Task Limit Reached", JOptionPane.ERROR_MESSAGE); 
                 }
-                else{
-                    JOptionPane.showMessageDialog(null, "You have reached the maximum number of tasks allowed.", "Maximum Task Limit Reached", JOptionPane.ERROR_MESSAGE);
-                }
-
-
             }
         });
 
-        JPanel bulletPanel = new JPanel();
-        bulletPanel.setBackground(getContentPane().getBackground());
-        bulletPanel.setBounds(426, 215, 320, 50);
 
-        JLabel bulletLabel = new JLabel("<html><div style='text-align: left;'><table><tr><td style='vertical-align: top;'>&#8226;</td><td>Specify the activity name, task time, and date of the task</td></tr><tr><td></td><td>you wish to add.</td></tr></table></div></html>");
+        JPanel bulletPanel = new JPanel();
+        bulletPanel.setBackground(Color.WHITE);
+        bulletPanel.setBounds(426, 215, 400, 30);
+
+        JLabel bulletLabel = new JLabel("<html><div style='text-align: left;'><table><tr><td style='vertical-align: top;'>&#8226;</td><td>Specify the activity name, task time, and date of the task you wish to add.</td></tr></table></div></html>");
         bulletLabel.setForeground(Color.GRAY);
         bulletLabel.setFont(new Font("Arial", Font.PLAIN, 12));
+
+        bulletPanel.setLayout(new FlowLayout(FlowLayout.LEFT));
         bulletPanel.add(bulletLabel);
         add(bulletPanel);
 
         JPanel outputPanel = new JPanel();
         outputPanel.setBackground(new Color(209, 203, 188));
         outputPanel.setForeground(Color.WHITE);
-        outputPanel.setBounds(426, 275, 790, 70);
+        outputPanel.setBounds(426, 255, 790, 70);
 
         JPanel outputPanel2 = new JPanel(new FlowLayout(FlowLayout.LEFT));
         outputPanel2.setBackground(new Color(209, 203, 188));
         outputPanel2.setForeground(Color.WHITE);
-        outputPanel2.setBounds(426, 275, 340, 70);
+        outputPanel2.setBounds(426, 255, 340, 70);
 
         HighlightPanel medPanel = new HighlightPanel();
-        medPanel.setBounds(672, 280, 37, 28);
+        medPanel.setBounds(672, 260, 37, 26);
+
+        taskInputField = new JTextField(3);
+        taskInputField.setOpaque(false);
+        taskInputField.setBorder(BorderFactory.createEmptyBorder());
+        taskInputField.setHorizontalAlignment(SwingConstants.CENTER);
+        taskInputField.setFont(new Font("Arial", Font.PLAIN, 12));
+        taskInputField.setForeground(Color.WHITE);
+        taskInputField.setEditable(false);
+        medPanel.add(taskInputField);
 
         HighlightPanel pivotPanel = new HighlightPanel();
-        pivotPanel.setBounds(685, 310, 380, 28);
+        pivotPanel.setBounds(685, 293, 380, 26);
 
+        lastColumnOutput = new JTextField(28);
+
+        lastColumnOutput.setEditable(false);
+        lastColumnOutput.setOpaque(false);
+        lastColumnOutput.setBorder(BorderFactory.createEmptyBorder());
+        lastColumnOutput.setHorizontalAlignment(SwingConstants.LEFT);
+        lastColumnOutput.setFont(new Font("Arial", Font.PLAIN, 15));
+        lastColumnOutput.setForeground(Color.WHITE);
+        pivotPanel.add(lastColumnOutput);
 
         JLabel outputLabel = new JLabel("<html><div style='text-align: left;'><table><tr><td style='vertical-align: top;'>&#8226;</td><td>Your lists of priorities consists of  ..l...... tasks.</td></tr></table></div></html>");
         outputLabel.setForeground(Color.BLACK);
@@ -414,11 +482,11 @@ public class PageOne extends JFrame{
         add(outputPanel);
 
         HighlightPanel topPrioritiesPanel = new HighlightPanel();
-        topPrioritiesPanel.setBounds(426, 365, 790, 33);
+        topPrioritiesPanel.setBounds(426, 341, 790, 33);
         add(topPrioritiesPanel);
 
         // Top Priorities label
-        JLabel topPrioritiesLabel = new JLabel("S C H E D U L E  R O U T I N E");
+        JLabel topPrioritiesLabel = new JLabel("S C H E D U L E   R O U T I N E");
         topPrioritiesLabel.setForeground(Color.WHITE);
         topPrioritiesLabel.setFont(new Font("Canva Sans", Font.BOLD, 14));
         topPrioritiesLabel.setHorizontalAlignment(SwingConstants.CENTER);
@@ -427,11 +495,11 @@ public class PageOne extends JFrame{
 
         // Top Priorities Table / TPT
         DefaultTableModel topPrioritiesTableModel = new DefaultTableModel();
-        topPrioritiesTableModel.addColumn("Date");
-        topPrioritiesTableModel.addColumn("Time");
-        topPrioritiesTableModel.addColumn("Task");
+        topPrioritiesTableModel.addColumn("DATE");
+        topPrioritiesTableModel.addColumn("TIME");
+        topPrioritiesTableModel.addColumn("TASK");
 
-        JTable topPrioritiesTable = new JTable(topPrioritiesTableModel);
+        topPrioritiesTable = new JTable(topPrioritiesTableModel);
         topPrioritiesTable.setBounds(426, topPrioritiesPanel.getY() + topPrioritiesPanel.getHeight() + 20, 790, 210);
 
         // TPT: Set column header attributes
@@ -456,24 +524,24 @@ public class PageOne extends JFrame{
 
         // TPT: Add the Top Priorities table to the frame
         JScrollPane topPrioritiesScrollPane = new JScrollPane(topPrioritiesTable);
-        topPrioritiesScrollPane.setBounds(426, topPrioritiesPanel.getY() + topPrioritiesPanel.getHeight() + 20, 790, 200);
+        topPrioritiesScrollPane.setBounds(426, topPrioritiesPanel.getY() + topPrioritiesPanel.getHeight() + 15, 790, 206);
         add(topPrioritiesScrollPane);
 
         JPanel proceedPanel = new JPanel();
-        proceedPanel.setBounds(426, 620, 790, 50);
-        //bottomPanel.setBackground(Color.PINK);
+        proceedPanel.setBackground(Color.WHITE);
+        proceedPanel.setBounds(426, 595, 790, 50);
         proceedPanel.setLayout(null);
         add(proceedPanel);
 
-        JLabel bottomPanelLabel = new JLabel("Would you like to arrange your schedule efficiently according to your chosen task?");
-        bottomPanelLabel.setFont(new Font("Canva Sans", Font.PLAIN, 15));
-        bottomPanelLabel.setBounds(5, 10, 600, 30);
+        JLabel bottomPanelLabel = new JLabel("Would you like to rearrange your schedule efficiently according to your chosen task?");
+        bottomPanelLabel.setFont(new Font("Canva Sans", Font.PLAIN, 14));
+        bottomPanelLabel.setBounds(5, 5, 600, 30);
         proceedPanel.add(bottomPanelLabel);
 
         RoundedButtonPanel routineButton = new RoundedButtonPanel("Yes");
-        routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 70, 10, 70, 30 );
-        routineButton.addActionListener(e -> this.controller.switchToPrioPanel());
+        routineButton.setBounds(bottomPanelLabel.getWidth() + 90, 8, 90, 30);
         proceedPanel.add(routineButton);
+        routineButton.addActionListener(e -> controller.switchToPrioPanel());
 
         add(scrollPane);
         add(mainPanel);
@@ -508,8 +576,54 @@ public class PageOne extends JFrame{
         return taskStack;
     }
 
-    /*public static void main(String[] args){
-        SwingUtilities.invokeLater(() -> new PageOne());
+    private void quicksort(DefaultTableModel model, int low, int high) {
+        if (low < high) {
+            int pi = partition(model, low, high);
+            quicksort(model, low, pi - 1);
+            quicksort(model, pi + 1, high);
+        }
     }
-    */
+
+    private void sortTable(DefaultTableModel model) {
+        int n = model.getRowCount();
+        quicksort(model, 0, n - 1);
+    }
+
+    private int partition(DefaultTableModel model, int low, int high) {
+        String pivotDate = (String) model.getValueAt(high, 0);
+        String pivotTime = (String) model.getValueAt(high, 1);
+        String pivotAmPm = pivotTime.substring(pivotTime.length() - 2);
+        String pivotDateTime = pivotDate + " " + pivotTime;
+
+        int i = low - 1;
+        for (int j = low; j < high; j++) {
+            String currentDate = (String) model.getValueAt(j, 0);
+            String currentTime = (String) model.getValueAt(j, 1);
+            String currentAmPm = currentTime.substring(currentTime.length() - 2); 
+            String currentDateTime = currentDate + " " + currentTime;
+
+            if (currentDateTime.compareTo(pivotDateTime) < 0 ||
+                    (currentDateTime.compareTo(pivotDateTime) == 0 && currentAmPm.equals("AM") && pivotAmPm.equals("PM"))) {
+                i++;
+                for (int k = 0; k < model.getColumnCount(); k++) {
+                    Object temp = model.getValueAt(i, k);
+                    model.setValueAt(model.getValueAt(j, k), i, k);
+                    model.setValueAt(temp, j, k);
+                }
+            }
+        }
+
+        for (int k = 0; k < model.getColumnCount(); k++) {
+            Object temp = model.getValueAt(i + 1, k);
+            model.setValueAt(model.getValueAt(high, k), i + 1, k);
+            model.setValueAt(temp, high, k);
+        }
+        return i + 1;
+    }
+
+    //public static void main(String[] args){
+    //    SwingUtilities.invokeLater(() -> new PageOne());
+    //}
+
 }
+
