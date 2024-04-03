@@ -1,22 +1,31 @@
+package com.example;
+
 import java.awt.Color;
-import java.awt.*;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.event.*;
+import java.util.*;
 import javax.swing.*;
 import javax.swing.table.*;
 
 public class PrioPanel extends JFrame {
     private DefaultTableModel tableModel;
     private JTable dataTable;
-    private FrameController controller;
+    private JTextField startInputField, startInputField2, firstTaskTextField;
+    private DefaultTableModel topPrioritiesTableModel;
+    private Map<String, List<String>> taskGraph;
+    private Set<String> visitedNodes;
 
-    public PrioPanel(FrameController controller) {
-        this.controller = controller;
+    public PrioPanel(FrameController controller, Stack<String[]> taskTableData) {
+        taskGraph = new HashMap<>();
+        visitedNodes = new HashSet<>();
         setTitle("Spark Sched");
         setSize(1280, 720);
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setLocationRelativeTo(null);
         setLayout(null);
 
-        ImageIcon logo = new ImageIcon("src/SparkSchedLogo.png");
+        ImageIcon logo = new ImageIcon(getClass().getResource("SparkSchedLogo.png"));
         setIconImage(logo.getImage());
 
         HighlightPanel taskSummary = new HighlightPanel();
@@ -34,6 +43,10 @@ public class PrioPanel extends JFrame {
         tableModel.addColumn("Date");
         tableModel.addColumn("Time");
         tableModel.addColumn("Task");
+
+        for (Object[] rowData : taskTableData) {
+            tableModel.addRow(rowData);
+        }
 
         dataTable = new JTable(tableModel);
         dataTable.setBounds(50, 130, 400, 200);
@@ -62,7 +75,7 @@ public class PrioPanel extends JFrame {
 
         JPanel tableInfo = new JPanel();
         tableInfo.setBackground(getContentPane().getBackground());
-        tableInfo.setBounds(-10, 545, taskSummary.getWidth(), taskSummary.getHeight()+ 20);
+        tableInfo.setBounds(-10, 545, taskSummary.getWidth(), taskSummary.getHeight() + 20);
 
         JLabel infoLabel = new JLabel("<html><div style='text-align: left;'><table><tr><td style='vertical-align: top;'>&#8226;</td><td>This table displays a summary of tasks</td></tr><tr><td></td><td>sorted by most recent additions</td></tr></table></div></html>");
         infoLabel.setForeground(Color.decode("#737373"));
@@ -75,7 +88,6 @@ public class PrioPanel extends JFrame {
         // RIGHT First Task panel
         JPanel firstTaskPanel = new JPanel();
         firstTaskPanel.setBounds(426, 50, 790, 70);
-        //firstTaskPanel.setBackground(Color.ORANGE); // To show panel dimensions only ദ്ദി(˵ •̀ ᴗ - ˵ ) ✧
         firstTaskPanel.setLayout(null);
         add(firstTaskPanel);
 
@@ -86,7 +98,7 @@ public class PrioPanel extends JFrame {
         firstTaskPanel.add(firstTaskLabel);
 
         // First Task textfield
-        CurvedTextField firstTaskTextField = new CurvedTextField();
+        firstTaskTextField = new JTextField();
         firstTaskTextField.setText("Enter task here");
         firstTaskTextField.setFont(new Font("Canva Sans", Font.PLAIN, 13));
         firstTaskTextField.setForeground(Color.decode("#737373"));
@@ -95,12 +107,63 @@ public class PrioPanel extends JFrame {
 
         // First Task button
         RoundedButtonPanel firstTaskButton = new RoundedButtonPanel("Enter");
-        firstTaskButton.setBounds(firstTaskPanel.getWidth()-100, firstTaskTextField.getY()+ 30 + 10, 100, 30);
+        firstTaskButton.setBounds(firstTaskPanel.getWidth() - 100, firstTaskTextField.getY() + 30 + 10, 100, 30);
+        firstTaskButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                String enteredText = firstTaskTextField.getText();
+                boolean textFound = false;
+                int selectedIndex = -1;
+
+                // Find the selected task in the dataTable
+                for (int i = 0; i < dataTable.getRowCount(); i++) {
+                    String task = (String) dataTable.getValueAt(i, 2);
+                    if (enteredText.equals(task)) {
+                        textFound = true;
+                        selectedIndex = i;
+                        break;
+                    }
+                }
+
+                if (textFound) {
+                    firstTaskTextField.setForeground(Color.BLACK);
+                    startInputField.setText(enteredText);
+                    updateStartInputField();
+
+                    // Clear the topPrioritiesTableModel before adding the selected task
+                    topPrioritiesTableModel.setRowCount(0);
+
+                    // Add the selected task to the top of the topPrioritiesTableModel
+                    Object[] rowData = new Object[tableModel.getColumnCount()];
+                    for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                        rowData[j] = tableModel.getValueAt(selectedIndex, j);
+                    }
+                    topPrioritiesTableModel.addRow(rowData);
+
+                    // Copy data from tableModel to topPrioritiesTableModel for other tasks
+                    for (int i = 0; i < tableModel.getRowCount(); i++) {
+                        if (i != selectedIndex) {
+                            rowData = new Object[tableModel.getColumnCount()];
+                            for (int j = 0; j < tableModel.getColumnCount(); j++) {
+                                rowData[j] = tableModel.getValueAt(i, j);
+                            }
+                            topPrioritiesTableModel.addRow(rowData);
+                        }
+                    }
+
+                    // Call DFS with the selected task as the starting node
+                    dfs(enteredText);
+
+                } else {
+                    JOptionPane.showMessageDialog(PrioPanel.this, "Enter a task from the table", "Error", JOptionPane.ERROR_MESSAGE);
+                }
+            }
+        });
         firstTaskPanel.add(firstTaskButton);
 
         // First Task info label
         JLabel firstTaskInfoLabel = new JLabel("<html>&#8226; Select task from 'Task Summary' to begin scheduling.</html>");
-        firstTaskInfoLabel.setBounds(10, firstTaskButton.getY(), firstTaskPanel.getWidth()-firstTaskButton.getWidth(), 30);
+        firstTaskInfoLabel.setBounds(10, firstTaskButton.getY(), firstTaskPanel.getWidth() - firstTaskButton.getWidth(), 30);
         firstTaskInfoLabel.setFont(new Font("Arial", Font.PLAIN, 13));
         firstTaskInfoLabel.setForeground(Color.decode("#737373"));
         firstTaskPanel.add(firstTaskInfoLabel);
@@ -119,15 +182,34 @@ public class PrioPanel extends JFrame {
         schedSummaryLabel.setFont(new Font("Arial", Font.PLAIN, 17));
         schedSummaryPanel.add(schedSummaryLabel);
 
-
         // Sched Highlight for "Start your day by accomplishing"
         HighlightPanel schedSummaryHighlight1 = new HighlightPanel();
         schedSummaryHighlight1.setBounds(schedSummaryLabel.getX() + schedSummaryLabel.getWidth() + 10, 15, 500, 30);
+
+        startInputField = new JTextField(20);
+        startInputField.setOpaque(false);
+        startInputField.setBorder(BorderFactory.createEmptyBorder());
+        startInputField.setHorizontalAlignment(SwingConstants.CENTER);
+        startInputField.setFont(new Font("Arial", Font.PLAIN, 15));
+        startInputField.setForeground(Color.WHITE);
+        startInputField.setEditable(false);
+        schedSummaryHighlight1.add(startInputField);
+
         schedSummaryPanel.add(schedSummaryHighlight1);
 
         // Sched Highlight for "The task is scheduled to start at"
         HighlightPanel schedSummaryHighlight2 = new HighlightPanel();
         schedSummaryHighlight2.setBounds(schedSummaryLabel.getX() + schedSummaryLabel.getWidth() + 10, 55, 300, 30);
+
+        startInputField2 = new JTextField(20);
+        startInputField2.setOpaque(false);
+        startInputField2.setBorder(BorderFactory.createEmptyBorder());
+        startInputField2.setHorizontalAlignment(SwingConstants.CENTER);
+        startInputField2.setFont(new Font("Arial", Font.PLAIN, 15));
+        startInputField2.setForeground(Color.WHITE);
+        startInputField2.setEditable(false);
+        schedSummaryHighlight2.add(startInputField2);
+
         schedSummaryPanel.add(schedSummaryHighlight2);
 
         // Top Priorities Panel
@@ -144,7 +226,7 @@ public class PrioPanel extends JFrame {
         topPrioritiesPanel.add(topPrioritiesLabel);
 
         // Top Priorities Table / TPT
-        DefaultTableModel topPrioritiesTableModel = new DefaultTableModel();
+        topPrioritiesTableModel = new DefaultTableModel();
         topPrioritiesTableModel.addColumn("Date");
         topPrioritiesTableModel.addColumn("Time");
         topPrioritiesTableModel.addColumn("Task");
@@ -180,7 +262,6 @@ public class PrioPanel extends JFrame {
         // Bottom Panel
         JPanel bottomPanel = new JPanel();
         bottomPanel.setBounds(426, 720 - 150 + 10, 790, 50);
-        //bottomPanel.setBackground(Color.PINK);
         bottomPanel.setLayout(null);
         add(bottomPanel);
 
@@ -190,22 +271,42 @@ public class PrioPanel extends JFrame {
         bottomPanel.add(bottomPanelLabel);
 
         RoundedButtonPanel routineButton = new RoundedButtonPanel("Proceed");
-        routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 10, 10, 100, 30 );
+        routineButton.setBounds(bottomPanelLabel.getWidth() - 100 + 10, 10, 100, 30);
         routineButton.addActionListener(e -> controller.switchToSchedRoutineSummary());
-
-
-
         bottomPanel.add(routineButton);
-
 
         setVisible(true);
     }
 
-
-    /*
-    public static void main(String[] args) {
-        SwingUtilities.invokeLater(() -> new PrioPanel(this));
+    private void dfs(String startTask) {
+        Stack<String> stack = new Stack<>();
+        stack.push(startTask);
+        visitedNodes.add(startTask);
+    
+        while (!stack.isEmpty()) {
+            String currentTask = stack.pop();
+            List<String> neighbors = taskGraph.getOrDefault(currentTask, new ArrayList<>());
+    
+            for (String neighbor : neighbors) {
+                if (!visitedNodes.contains(neighbor)) {
+                    stack.push(neighbor);
+                    visitedNodes.add(neighbor);
+                    dfs(neighbor); // Recursive call to visit neighbors of the current neighbor
+                }
+            }
+        }
     }
-     */
 
+    private void updateStartInputField() {
+        String enteredText = firstTaskTextField.getText();
+        for (int i = 0; i < dataTable.getRowCount(); i++) {
+            String task = (String) dataTable.getValueAt(i, 2);
+            if (enteredText.equals(task)) {
+                String date = (String) dataTable.getValueAt(i, 0);
+                String time = (String) dataTable.getValueAt(i, 1);
+                startInputField2.setText(date + " and " + time);
+                break;
+            }
+        }
+    }
 }
